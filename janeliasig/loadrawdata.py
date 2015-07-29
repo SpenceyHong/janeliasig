@@ -1,17 +1,3 @@
-from scipy import stats
-import numpy as np
-import matplotlib.pyplot as plt
-import math
-import random
-import time
-import os
-import warnings
-import matplotlib.ticker as ticker
-
-get_ipython().magic(u'matplotlib inline')
-
-#mpld3.enable_notebook()
-
 def loadRawData(filename, num_elements = float("inf"), sourcedataformat = 'int8', target_dataformat = 'int8'):
 
     #dirinfo = dir(filename)
