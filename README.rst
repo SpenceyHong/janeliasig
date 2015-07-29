@@ -10,7 +10,7 @@ This module includes a data browser GUI built with Tkinter.
 To use this browser, simply go to bash (Terminal) and do >>>
 	find the directory that contains 'gui_browser.py'
 	
-	type and run 'python GUI_Browser.py'
+	type and run 'python gui_browser.py'
 
 
 The rest of the module can be imported normally.
