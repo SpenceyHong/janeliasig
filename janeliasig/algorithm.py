@@ -1,3 +1,17 @@
+'''
+`filename` refers to the full directory of the .bin file. 
+
+`num_elements` refers to the number of elements you wish to unpack from the binary file. The **default** is infinity. I **recommend** that only 50e6 elements are unpacked at a time. 
+
+`sourcedataformat` refers to the format of the input data. The **default** is int8. 
+
+`targetdataformat` refers to the format of the output data. The **default** is int8.
+
+load_raw_data() is a converted file from matlab to Python. It will unpack any binary file to make it matplotlib-compatible data. The binary file is unpacked chunks at at time to decrease the chance of system crash. 
+~~~~
+The output is a list of all data points that you have unpacked. 
+~~~~
+'''
 def load_raw_data(filename, num_elements = float("inf"), sourcedataformat = 'int8', target_dataformat = 'int8'):
     import os
     import math
@@ -51,6 +65,20 @@ def load_raw_data(filename, num_elements = float("inf"), sourcedataformat = 'int
     return data
     fileID.close()
 
+'''
+`data_array` refers to the dataset that you wish to run the detection algorithm on.
+
+`threshold` refers to the minimum distance between a peak to a valley for the algorithm to detect it as a peak.
+
+`x_axis` is an array of x-coordinates that go along with the `data_array`. The **default** is None. 
+
+Will detect most peaks in any dataset. 
+
+~~~~
+The output is a tuple of two numpy arrays:(peak values and times), (valley values and times).
+~~~~
+***Valley refers to the minimums while peak refers to the maximums***
+'''
 def peakdet(data_array, threshold, x_axis = None):
     import numpy as np
     maxtab = []
@@ -99,6 +127,14 @@ def peakdet(data_array, threshold, x_axis = None):
  
     return np.array(maxtab), np.array(mintab)
 
+'''
+`threshold_value`; please refer to the docstring for **peakdet()**
+
+`data`; again, ditto above
+~~~~
+The output is a tuple of two lists; peak times, peak events. The algorithm can be modified to return valley times and events. 
+~~~~
+'''
 def threshold_algorithm(threshold_value, data):
 
     arrival_times = []
@@ -110,6 +146,16 @@ def threshold_algorithm(threshold_value, data):
         peak_values.append(maxtab[integer][1])
     return arrival_times, peak_values
 
+'''
+`data` refers to any dataset that wishes to be cleaned up using a cross-correlation and smart threshold analysis. 
+
+`template` refers to the list of points that will act as a template for cross correlation. 
+The data that I used this function on was unpacked using `load_raw_data` function.
+
+~~~
+The output is a tuple of peak events, peak times, and the correlated data. 
+~~~
+'''
 def clean_algorithm(data, template):
     template_list = template
     zero_convoluted_data = list(data)
@@ -212,6 +258,19 @@ def clean_algorithm(data, template):
             correlated_data[n] = 0
 
     return final_peak_values, final_peak_times, correlated_data
+
+'''
+`times_data` should be a list of times that a photon has reflected back. 
+
+This function attempts to make a mean-variance graph based on the discreet-time series data of photon arrivals. 
+In other cases, it can be used to make a mean-variance graph of any discreet data. 
+The mean-variance graph can be used to check if the data follows a poisson process, where the ***mean*** equals the ***variance***.
+~~~~
+The output is `mean_data, variance_data, std_data`, where `mean_data` is a list of all means, 
+`variance_data` is a list of all variances, and `std_data` is a list of standard errors. 
+Run `plt.plot(mean_data, variance_data)` and `plt.errorbar(mean_data, variance_data, yerr= std_data)` *(plt == matplotlib.pyplot)* to visualize the output. 
+~~~~
+'''
 def mean_variance_graph(times_data):
     import numpy as np
     variance_data = []
@@ -224,6 +283,14 @@ def mean_variance_graph(times_data):
         std_data.append(np.std(events)/float(len(events) ** 0.5))
     return mean_data, variance_data, std_data
 
+'''
+`sigma` refers to the standard deviation of the desired gaussian kernel. 
+
+This function will take 401 points to create a full gaussian kernel. 
+~~~~
+The output is a gaussian kernel in a list (length of 401)
+~~~~
+'''
 def gaussian_kernel(sigma):
     from scipy import stats
     import numpy as np
@@ -233,6 +300,24 @@ def gaussian_kernel(sigma):
     for i in x:
 		kernel.append(stats.norm.pdf(i, 0, sigma))
     return kernel
+
+'''
+`gold_standard_input` refers to the "true" data, the dataset that will be used to compare all other datasets. 
+
+`algorithm_standard_input` refers to the "detected" data, the dataset that will be compared to the true dataset. 
+
+`threshold_max` refers to the maximium threshold level the confusion matrix will work to. The **default** is 5. 
+
+`threshold_interval` refers to the interval that the threshold levels will be increasing. The **default** is 0.15. 
+
+(The last two functions only make sense if you are using this function in the context of peak_detection. If you are not doing so, feel free to modify the function.)
+
+This function also will return the **matthew's correlation coefficient** which is a single value that measures the idealness of the algorithm. 
+
+~~~~
+The output is `matrix_set, matthews_coeff_set` as a tuple.
+~~~~
+'''
 def make_confusion_matrix(gold_standard_input, algorithm_standard_input, threshold_max = 5, threshold_interval = 0.15):
     from sklearn.metrics import confusion_matrix, matthews_corrcoef
     import numpy as np
@@ -264,6 +349,21 @@ def make_confusion_matrix(gold_standard_input, algorithm_standard_input, thresho
         matrix_set.append(matrix)
     return matrix_set, matthews_coeff_set
 
+'''
+`gold_standard_input`; please refer to the docstring for **make_confusion_matrix()**
+
+`algorithm_standard_input`; again, ditto above
+
+`threshold_max`; again, ditto above
+
+`threshold_interval`; again, ditto above
+
+The receiver operating curve is a visualization of the idealness of the algorithm. I ran this curve with my peak detection algorithms and poisson simulations as the `gold_standard_input`.
+
+~~~~
+The output is a tuple of false positives, true positives. But, the function calculates also false negatives and true negatives (just modify the output line).
+~~~
+'''
 def receiver_operating_curve(gold_standard_input, algorithm_standard_input, threshold_max = 5, threshold_interval = 0.15):
     import numpy as np
 
@@ -316,10 +416,29 @@ def receiver_operating_curve(gold_standard_input, algorithm_standard_input, thre
         true_positive_set.append(true_positive_rate)
     return false_positive_set, true_positive_set
 
+'''
+`x` refers to the x coordinates.
+
+`y` refers to the y coordinates.
+
+~~~~
+The output is a r-squared value based on a linear regression.
+~~~~
+'''
 def rsquared(x, y):
     import scipy as sp
     slope, intercept, r_value, p_value, std_err = sp.stats.linregress(x, y)
     return r_value ** 2
+
+'''
+`interval_data` refers to a list of times that a photon has reflected back.
+
+`variable` is a counter: 1 to return variances, 2 to return means, and 3 to return standard errors. The **default** is 1, the variance. 
+
+~~~~
+The output is either the variance, the mean, or the standard error of the input list. (Modify the function to return tuples)
+~~~~
+'''
 def statistics(interval_data, variable = 1):
     import numpy as np
     stats_mean = np.average(interval_data)
@@ -333,6 +452,16 @@ def statistics(interval_data, variable = 1):
     else:
         return round(stats_mean, 3)
 
+'''
+`expected` refers to the lambda of the poisson process. 
+
+`trial` refers to how many times the poisson processs is going run to produce the expected value.
+
+`repetition` refers to the number of times the poisson process is going to be repeated. The **default** is 1. 
+
+The output is a list of three elements: [variances, means, standard errors]
+***statistics() is used in this simulation***
+'''
 def full_simulation(expected, trial, repetition = 1):
     import numpy as np
 
@@ -353,6 +482,16 @@ def full_simulation(expected, trial, repetition = 1):
     final_statistics.append(round(np.mean(statistics_z), 3))
     
     return final_statistics
+
+'''
+`expected`; please refer to the docstring for **full_simulation()**
+
+`trials`; again, ditto above
+
+~~~~
+The ouput is a list of times of poisson-modulated events.
+~~~~
+'''
 def poisson(expected, trials):
     import numpy as np
     import random
@@ -366,6 +505,16 @@ def poisson(expected, trials):
         poisson_data[i] = t
         
     return poisson_data
+
+'''
+`expected`; please refer to the docstring for **full_simulation()**
+
+`trials`; again, ditto above
+
+~~~~
+The output is a list of times in between poisson-modulated events.
+~~~~
+'''
 def poisson_interarrival(expected, trials):
     import numpy as np
 

@@ -83,7 +83,9 @@ These docstrings are present in the module, but this is a  comprehensive list of
 
 load_raw_data() is a converted file from matlab to Python. It will unpack any binary file to make it matplotlib-compatible data. The binary file is unpacked chunks at at time to decrease the chance of system crash. 
 
+~~~
 The output is a list of all data points that you have unpacked. 
+~~~
 
 #####peakdet():
 `data_array` refers to the dataset that you wish to run the detection algorithm on.
@@ -132,8 +134,9 @@ The output is `mean_data, variance_data, std_data`, where `mean_data` is a list 
 
 This function will take 401 points to create a full gaussian kernel. 
 
+~~~~
 The output is a gaussian kernel in a list (length of 401)
-
+~~~~
 #####make_confusion_matrix():
 `gold_standard_input` refers to the "true" data, the dataset that will be used to compare all other datasets. 
 
@@ -162,14 +165,18 @@ The output is `matrix_set, matthews_coeff_set` as a tuple.
 
 The receiver operating curve is a visualization of the idealness of the algorithm. I ran this curve with my peak detection algorithms and poisson simulations as the `gold_standard_input`.
 
+~~~~
 The output is a tuple of false positives, true positives. But, the function calculates also false negatives and true negatives (just modify the output line).
+~~~~
 
 #####rsqured():
 `x` refers to the x coordinates.
 
 `y` refers to the y coordinates.
 
+~~~~
 The output is a r-squared value based on a linear regression.
+~~~~
 
 #####statistics():
 `interval_data` refers to a list of times that a photon has reflected back.
