@@ -31,6 +31,16 @@ Install Anacodona at <http://continuum.io/downloads>
 
 IPython Jupyter Notebook at <http://ipython.org/install.html>
 
+janeliasig is available on PYPI!
+
+`pip install janeliasig`
+
+Or
+
+Clone this directory and run
+
+`python setup.py install`
+
 ##GUI Browser
 The GUI lies in the module folder as *gui_browser.py*
 
