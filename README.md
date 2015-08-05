@@ -7,6 +7,14 @@ Contact me at <spencer.hongx@gmail.com> (preferred) or <hongs@janelia.hhmi.org>
 GitHub: <http://www.github.com/SpenceyHong/janeliasig>
 
 *Janelia is a research campus of the Howard Hughes Medical Institute (HHMI). My group leader was Dr. Karel Svoboda. To learn more about Janelia, visit <http://www.janelia.org>.*
+##License and Copyright
+Portions of Code contained are subject to the MIT License. 
+
+Janelia Research Campus Software Copyright 1.1
+
+Copyright (c) 2015, Howard Hughes Medical Institute, All rights reserved.
+
+Please see **License.txt** for more information.
 ##Overview
 This is a Python module with ** three features **
 
