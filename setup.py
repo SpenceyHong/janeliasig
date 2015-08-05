@@ -1,7 +1,7 @@
 from setuptools import setup
 
 def readme():
-	with open('README.rst') as f:
+	with open('README.md') as f:
 		return f.read()
 
 setup(name='janeliasig',
@@ -23,12 +23,7 @@ setup(name='janeliasig',
       'matplotlib',
       'numpy',
       'scipy',
-      'sklearn',
-      'time',
-      'os',
-      'random',
-      'math',
-      'warnings'
+      'sklearn'
       ],
       include_package_data = True,
       zip_safe=False)

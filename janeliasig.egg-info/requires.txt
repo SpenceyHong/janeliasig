@@ -1,9 +1,0 @@
-matplotlib
-numpy
-scipy
-sklearn
-time
-os
-random
-math
-warnings
