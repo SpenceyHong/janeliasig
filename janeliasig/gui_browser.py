@@ -171,7 +171,7 @@ def browse():
     real_data = []
     ax.clear()
     fname = askopenfilename()
-    photons = loadRawData(fname, 50e4)
+    photons = loadRawData(fname, 5e4)
     x_photons = np.linspace(0, len(photons)* (2.0/3.0), len(photons))
     y_photons = photons
 

@@ -31,6 +31,16 @@ Install Anacodona at <http://continuum.io/downloads>
 
 IPython Jupyter Notebook at <http://ipython.org/install.html>
 
+janeliasig is available on PYPI!
+
+`pip install janeliasig`
+
+Or
+
+Clone this directory and run
+
+`python setup.py install`
+
 ##GUI Browser
 The GUI lies in the module folder as *gui_browser.py*
 
@@ -202,9 +212,12 @@ The output is either the variance, the mean, or the standard error of the input 
 
 `trial` refers to how many times the poisson processs is going run to produce the expected value.
 
-`repetition` refers to the number of times the poisson process is going to be repeated. The **default** is 1. 
+`repetition` refers to the number of times the poisson process is going to be repeated. 
+
+The **default** is 1. 
 
 The output is a list of three elements: [variances, means, standard errors]
+
 ***statistics() is used in this simulation***
 
 #####poisson():
