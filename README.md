@@ -57,6 +57,8 @@ To run the peak-detection method and the cross correlation, press ***Plot Detect
 
 *Maximize and Minimize functions are glitchy on cross-correlated graphs.*
 
+The left and right arrow keys will pan the graph. Up and right arrow keys will only move the y-window slightly at a time.
+
 To change the input file, the GUI will allow you to change it, so you don't need to close out every time you wish to change the input file.
 
 The built-in matplotlib functions like pan, save, and subplot settings are still in place.
