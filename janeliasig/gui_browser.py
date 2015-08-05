@@ -218,6 +218,21 @@ def threshold_algorithm_1(threshold_value, data):
     for integer in range(0, len(maxtab)):
         peak_values.append(maxtab[integer][1])
     return peak_values
+
+def threshold_algorithm_2(threshold_value, data):
+    arrival_times = []
+    maxtab, mintab = peakdet(data, threshold_value)
+
+    for integer in range(0, len(mintab)):
+        arrival_times.append(mintab[integer][0])
+    return arrival_times
+def threshold_algorithm_3(threshold_value, data):
+    peak_values = []
+    maxtab, mintab = peakdet(data, threshold_value)
+
+    for integer in range(0, len(mintab)):
+        peak_values.append(mintab[integer][0])
+    return peak_values
 def peakdet(data_array, threshold, x_axis = None):
     maxtab = []
     mintab = []
@@ -281,11 +296,11 @@ def show_peaks():
     v = zero_noised_signal
 
     correlated_data = signal.correlate(a, v, mode = 'full' )
-
+    '''
     for n in range(0, len(correlated_data)):
         if correlated_data[n] < 0:
             correlated_data[n] = 0
-
+    '''      
     bin_count = 1
     temp_data = []
     while 0 not in temp_data:
@@ -293,14 +308,14 @@ def show_peaks():
         bin_count += 1
         
     hist, bin_edges = np.histogram(correlated_data, bins = bin_count)
-    
+
     total_count = sum(hist)
     temp_sum = 0
     threshold_value = 0
     '''
     for i in range(0, len(hist)):
         temp_sum += hist[i]
-
+        
         if temp_sum >= total_count * 0.05 and bin_edges[i] > 0:
             threshold_value = i
             break
@@ -309,18 +324,22 @@ def show_peaks():
     temp_sum = 0
     for i in range(0, len(hist)):
         temp_sum += hist[i]
-        if temp_sum >= total_count * 0.993 and bin_edges[i] > 0:
+        if temp_sum >= total_count * 0.95 and bin_edges[i] > 0:
             offshoot_value = i
             break     
-                  
+              
     threshold_value = 0
     offshoot_value = bin_edges[offshoot_value]
 
     temp_peak_times = threshold_algorithm(threshold_value,correlated_data)
     temp_peak_values = threshold_algorithm_1(threshold_value, correlated_data)
-
+    temp_min_times = threshold_algorithm_2(threshold_value, correlated_data)
+    temp_min_values = threshold_algorithm_3(threshold_value, correlated_data)
+    min_values = []
+    min_times = []
     peak_values = []
     peak_times = []
+    temp_reached_peakhigh = False
     reached_peakhigh = False
     #print temp_peak_times[0:200], temp_peak_values[0:200]
     #print "__________________________________________"
@@ -343,19 +362,45 @@ def show_peaks():
         if temp_peak_values[c] >= offshoot_value:
             reached_peakhigh = True
     final_peak_times = peak_times
-    final_peak_values = []
-        
+    final_peak_values = []   
     '''
+
+    for odi in range(0, len(temp_peak_values)):
+        if temp_reached_peakhigh:
+            if temp_peak_values[odi] < (offshoot_value * 0.2):
+                min_values.append(abs(float(temp_peak_values[odi])/temp_peak_values[odi - 1]))
+            temp_reached_peakhigh = False
+        else:
+            if temp_peak_values[odi] < offshoot_value:
+                temp_reached_peakhigh = False
+            else:
+                temp_reached_peakhigh = True
+                
+    average_difference = np.mean(min_values)
+
+
+
     for c in range(0, len(temp_peak_values)):
         if reached_peakhigh:
-            if temp_peak_times[c] - temp_peak_times[c-1] < 50: 
-                reached_peakhigh = False
+            if abs(temp_peak_times[c]) - abs(temp_peak_times[c]) < 50: 
+                if abs(temp_peak_values[c]) > (abs(temp_peak_values[c-1]) * average_difference):
+                    peak_values.append(temp_peak_values[c])
+                    peak_times.append(temp_peak_times[c])
+                    reached_peakhigh = False
+                    #print "it hit an overshoot"
+                    #print temp_peak_values[c], temp_peak_times[c]
+                    #print temp_min_values[c], temp_min_times[c]
+                else:
+                    reached_peakhigh = True
+                
             else:
                 if temp_peak_values[c] < offshoot_value:
                     peak_values.append(temp_peak_values[c])
                     peak_times.append(temp_peak_times[c])
                     reached_peakhigh = False
                 else:
+                    peak_values.append(temp_peak_values[c])
+                    peak_times.append(temp_peak_times[c])
                     reached_peakhigh = True
         else:
             if temp_peak_values[c] < offshoot_value:
@@ -365,24 +410,26 @@ def show_peaks():
                 reached_peakhigh = True
                 peak_values.append(temp_peak_values[c])
                 peak_times.append(temp_peak_times[c])
-
-    final_peak_times = peak_times
+                
+    final_peak_times = []
     final_peak_values = []
-    for peak in peak_values:
-        final_peak_values.append(peak)
-
-
-
-    
+    for bail in range(0, len(peak_values)):
+        if peak_values[bail] >= 0:
+            final_peak_values.append(peak_values[bail])
+            final_peak_times.append(peak_times[bail])
+        
+    for n in range(0, len(correlated_data)):
+        if correlated_data[n] < 0:
+            correlated_data[n] = 0
     ax.plot(correlated_data)
+    #ax.scatter(np.array(maxtab)[:,0], np.array(maxtab)[:,1], color='green', label = "Peaks")
+    #ax.scatter(np.array(mintab)[:,0], np.array(mintab)[:,1], color='red', label = "Valleys")
     ax.scatter(final_peak_times, final_peak_values)
-    string2.set("Overshoot Threshold " + str(offshoot_value) )
     ax.set_title("Peak Detection on Cross Correlated Data")
     ax.set_xlabel("Time - nanoseconds")
-    ax.set_xlim(current_xmin, current_xmax)
     ax.set_ylim(-500, 5500)
+    ax.set_xlim(current_xmin, current_xmax)
     fig.canvas.draw()
-
 #Will not work for negatively scaled amplitudes
 #Output of "nan to nan" for failures
 def peak_analyze():
