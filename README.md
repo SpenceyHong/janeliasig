@@ -114,8 +114,9 @@ The output is a tuple of two lists; peak times, peak events. The algorithm can b
 `template` refers to the list of points that will act as a template for cross correlation. 
 The data that I used this function on was unpacked using `load_raw_data` function.
 
-The output is a tuple of peak events and peak times. 
-
+~~~
+The output is a tuple of peak events, peak times, and the correlated data. 
+~~~
 **This algorithm is used in the GUI. This is the extent of my progress during my time at Janelia.**
 
 #####mean_variance_graph():
