@@ -171,7 +171,7 @@ def browse():
     real_data = []
     ax.clear()
     fname = askopenfilename()
-    photons = loadRawData(fname, 50e4)
+    photons = loadRawData(fname, 90e4)
     x_photons = np.linspace(0, len(photons)* (2.0/3.0), len(photons))
     y_photons = photons
 
@@ -273,7 +273,7 @@ def mean_confidence_interval(data, confidence=0.95):
 def show_peaks():
     global y_photons, a, f, offshoot_value
     ax.clear()
-    template_list = [ 1 , 4 , 7 ,10 ,13 ,16 ,18 ,21 ,22 ,23 ,24 ,25 ,24 ,24 ,23 ,21 ,19 ,17 ,14, 12 ,10  ,8  ,5 , 3 , 1]
+    template_list = [0,0.25,0.75,1.75,2.5,6,7.75,9.25,10.25,10.75,11.25,11.5,11.25,10.75,10.25,9.25,7.75,6,2.5,1.75,0.75,0.25,0]
     zero_convoluted_data = list(y_photons)
     zero_noised_signal =   template_list
 
@@ -363,8 +363,6 @@ def show_peaks():
                 peak_times.append(temp_peak_times[c])
             if temp_peak_values[c] >= offshoot_value:
                 reached_peakhigh = True
-                peak_values.append(temp_peak_values[c])
-                peak_times.append(temp_peak_times[c])
 
     final_peak_times = peak_times
     final_peak_values = []
