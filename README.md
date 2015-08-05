@@ -202,9 +202,12 @@ The output is either the variance, the mean, or the standard error of the input 
 
 `trial` refers to how many times the poisson processs is going run to produce the expected value.
 
-`repetition` refers to the number of times the poisson process is going to be repeated. The **default** is 1. 
+`repetition` refers to the number of times the poisson process is going to be repeated. 
+
+The **default** is 1. 
 
 The output is a list of three elements: [variances, means, standard errors]
+
 ***statistics() is used in this simulation***
 
 #####poisson():
