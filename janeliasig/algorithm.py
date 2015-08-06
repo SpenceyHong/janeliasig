@@ -90,10 +90,12 @@ def peakdet(data_array, threshold, x_axis = None):
     import numpy as np
     maxtab = []
     mintab = []
-       
+    
+
+    #If there is no x axis provided, just use the length of the provided data
     if x_axis is None:
         x_axis = np.arange(len(data_array))
-    
+    #make it into an array
     data_array = np.asarray(data_array)
     
     if len(data_array) != len(x_axis):
@@ -101,7 +103,7 @@ def peakdet(data_array, threshold, x_axis = None):
     
     if not np.isscalar(threshold):
         raise ValueError('Input argument delta must be a scalar')
-    
+    #the algorithm will not run with negative thresholds
     if threshold < 0:
         raise ValueError('Input argument delta must be positive')
     
@@ -112,15 +114,17 @@ def peakdet(data_array, threshold, x_axis = None):
     
     for i in np.arange(len(data_array)):
         this = data_array[i]
+        #check to see if the initial point is a minimum or maximum
         if this > mx:
             mx = this
             mxpos = x_axis[i]
         if this < mn:
             mn = this
             mnpos = x_axis[i]
-        
+        #after reaching a minimum, the algorithm will look for a maximum
         if look_for_max:
             if this < mx-threshold:
+                #if a peak is reached, add a tuple of x, y
                 maxtab.append((mxpos, mx))
                 mn = this
                 mnpos = x_axis[i]
@@ -234,6 +238,7 @@ def clean_algorithm(data, template):
     for c in range(0, len(temp_peak_values)):
         if reached_peakhigh:
             if abs(temp_peak_times[c]) - abs(temp_peak_times[c]) < 50: 
+                #If the fraction of the overshoot exceeds the ringing, then count it as a peak
                 if abs(temp_peak_values[c]) > (abs(temp_peak_values[c-1]) * average_difference):
                     peak_values.append(temp_peak_values[c])
                     peak_times.append(temp_peak_times[c])
@@ -245,6 +250,7 @@ def clean_algorithm(data, template):
                     reached_peakhigh = True
                 
             else:
+                #if its greater than the overshoot, in the next iteration, check for the ringing
                 if temp_peak_values[c] < offshoot_value:
                     peak_values.append(temp_peak_values[c])
                     peak_times.append(temp_peak_times[c])
