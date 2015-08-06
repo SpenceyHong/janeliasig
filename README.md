@@ -31,6 +31,10 @@ Install Anacodona at <http://continuum.io/downloads>
 
 IPython Jupyter Notebook at <http://ipython.org/install.html>
 
+Freetype is needed for this module; it can't be downloaded via pip.
+
+Download freetype by `brew install freetype` through homebrew
+
 janeliasig is available on PYPI!
 
 `pip install janeliasig`
