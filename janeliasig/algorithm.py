@@ -53,6 +53,8 @@ def load_raw_data(filename, num_elements = float("inf"), sourcedataformat = 'int
     num_elements = min(num_elements, num_file_elements)
     data = np.zeros(num_elements, target_dataformat)
     
+
+    #Dividing the data into chunks (50 megabytes at a time)
     chunk_size_bytes = 50e6
     chunk_size_elements = chunk_size_bytes / bytes_per_element
     
@@ -61,6 +63,8 @@ def load_raw_data(filename, num_elements = float("inf"), sourcedataformat = 'int
     for iter in range(1, int(math.floor(num_elements/chunk_size_elements))):
          data[chunk_size_elements*(iter-1)+1: chunk_size_elements*iter] = np.fromfile(fileID, sourcedataformat, chunk_size_elements)
     
+
+    #Takes the remaining elements and pushes them to the end of the data array
     remaining_elements = int(num_elements%chunk_size_elements)
     data[-1 - remaining_elements+1:-1] = np.fromfile(fileID, sourcedataformat, remaining_elements - 1)
    
@@ -465,7 +469,7 @@ def statistics(interval_data, variable = 1):
         return round(stats_mean, 3)
 
 
-def full_simulation(expected, trial, repetition = 1):
+def mean-variance-poisson(expected, trial, repetition = 1):
     '''
     `expected` refers to the lambda of the poisson process. 
 
