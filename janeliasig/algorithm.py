@@ -441,6 +441,7 @@ def rsquared(x, y):
     ~~~~
     '''
     import scipy as sp
+    #this is a r-squared value based on linear regression; therefore, only datasets with linear forms can utilize this function
     slope, intercept, r_value, p_value, std_err = sp.stats.linregress(x, y)
     return r_value ** 2
 
@@ -469,7 +470,7 @@ def statistics(interval_data, variable = 1):
         return round(stats_mean, 3)
 
 
-def mean-variance-poisson(expected, trial, repetition = 1):
+def mean_variance_poisson(expected, trial, repetition = 1):
     '''
     `expected` refers to the lambda of the poisson process. 
 
