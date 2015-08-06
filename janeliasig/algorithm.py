@@ -146,12 +146,19 @@ def threshold_algorithm(threshold_value, data):
     '''
     arrival_times = []
     peak_values = []
+    min_times = []
+    valley_values = []
     maxtab, mintab = peakdet(data,threshold_value)
     
     for integer in range(0, len(maxtab)):
         arrival_times.append(maxtab[integer][0])
         peak_values.append(maxtab[integer][1])
-    return arrival_times, peak_values
+
+    for integer in range(0, len(mintab)):
+        min_times.append(mintab[integer][0])
+        valley_values.append(mintab[integer][1])
+
+    return arrival_times, peak_values, min_times, valley_values
 
 
 def clean_algorithm(data, template):
@@ -174,6 +181,7 @@ def clean_algorithm(data, template):
 
     correlated_data = signal.correlate(a, v, mode = 'full' )
  
+    #finds the bin count where 0 is not part of the histogram
     bin_count = 1
     temp_data = []
     while 0 not in temp_data:
@@ -186,6 +194,7 @@ def clean_algorithm(data, template):
     temp_sum = 0
     threshold_value = 0
 
+    #finds the threshold value based on the 95% of the histogram's weight
     total_count = sum(hist)
     temp_sum = 0
     for i in range(0, len(hist)):
@@ -196,11 +205,9 @@ def clean_algorithm(data, template):
               
     threshold_value = 0
     offshoot_value = bin_edges[offshoot_value]
-
-    temp_peak_times = threshold_algorithm(threshold_value,correlated_data)
-    temp_peak_values = threshold_algorithm_1(threshold_value, correlated_data)
-    temp_min_times = threshold_algorithm_2(threshold_value, correlated_data)
-    temp_min_values = threshold_algorithm_3(threshold_value, correlated_data)
+    #The next line just tells the program to detect any and all peaks and valleys
+    temp_peak_times, temp_peak_values, temp_min_times, temp_peak_values = threshold_algorithm(threshold_value,correlated_data)
+    
     min_values = []
     min_times = []
     peak_values = []
@@ -208,6 +215,7 @@ def clean_algorithm(data, template):
     temp_reached_peakhigh = False
     reached_peakhigh = False
    
+   #finds the average difference between an overshoot and the "ringing" right afterwards
     for odi in range(0, len(temp_peak_values)):
         if temp_reached_peakhigh:
             if temp_peak_values[odi] < (offshoot_value * 0.2):
@@ -218,7 +226,7 @@ def clean_algorithm(data, template):
                 temp_reached_peakhigh = False
             else:
                 temp_reached_peakhigh = True
-                
+    #this is the average fraction, or ratio that I will be using to differentiate noise from photons      
     average_difference = np.mean(min_values)
 
 
@@ -398,10 +406,13 @@ def receiver_operating_curve(gold_standard_input, algorithm_standard_input, thre
         false_positive_rate = 0.
         true_positive_rate = 0.
         
+        #this will be the output of the algorithm
         algorithm_standard = threshold_algorithm(criterion, algorithm_standard_input)
+        #preallocating the array
         algorithm_full_data = np.zeros(len(algorithm_standard_input))
         algorithm_full_data[algorithm_standard] = 1
         
+        #this is what the algorithm output will be compared against
         gold_standard = threshold_algorithm(0, gold_standard_input)
         gold_full_data = np.zeros(len(algorithm_standard_input))
         gold_full_data[gold_standard] = 1
@@ -440,9 +451,9 @@ def rsquared(x, y):
     The output is a r-squared value based on a linear regression.
     ~~~~
     '''
-    import scipy as sp
+    from scipy import stats
     #this is a r-squared value based on linear regression; therefore, only datasets with linear forms can utilize this function
-    slope, intercept, r_value, p_value, std_err = sp.stats.linregress(x, y)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
     return r_value ** 2
 
 def statistics(interval_data, variable = 1):
@@ -463,6 +474,7 @@ def statistics(interval_data, variable = 1):
     stats_stderror = np.std(interval_data)/(len(interval_data)**0.5)
     
     if variable == 2:
+        #rounding to the 3rd decimal place
         return round(stats_variance, 3)
     elif variable == 3:
         return round(stats_stderror, 3)
@@ -500,6 +512,7 @@ def mean_variance_poisson(expected, trial, repetition = 1):
     final_statistics.append(round(np.mean(statistics_y), 3))
     final_statistics.append(round(np.mean(statistics_z), 3))
     
+    #Created a list of the following [mean, variance, and standard error]
     return final_statistics
 
 

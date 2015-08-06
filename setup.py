@@ -5,7 +5,7 @@ def readme():
 		return f.read()
 
 setup(name='janeliasig',
-      version='0.91',
+      version='0.92',
       description='Rudimentary Simulations/Manipulations of PMT Outputs',
       long_description = readme(),
       classifiers = [
