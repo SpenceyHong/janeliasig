@@ -45,6 +45,10 @@ Clone this directory and run
 
 `python setup.py install`
 
+
+##Testing
+To check if the module is working, either run the GUI browser (see below) or go to the janeliasig source folder and run `test_janeliasig.py`
+
 ##GUI Browser
 The GUI lies in the module folder as *gui_browser.py*
 
@@ -67,17 +71,26 @@ When the GUI opens, first press ***Input File*** to select your choice of .bin f
 
 Then, to choose the x window range, type the mimimum and the maximum of the x window. Then, press ***Click to Change X-Window***.
 
+
+Then, to choose the y window range, type the mimimum and the maximum of the y window. Then, press ***Click to Change y-Window***.
+
+
 To run the peak-detection method and the cross correlation, press ***Plot Detected Peaks***. 
 
-*Maximize and Minimize functions are glitchy on cross-correlated graphs.*
+**(+) and (-) will minimize and maximize the respective window (x or y) by 10%.** 
 
-The left and right arrow keys will pan the graph. Up and right arrow keys will only move the y-window slightly at a time.
+The left and right arrow keys will pan the graph. Up and right arrow keys move the y window. 
 
 To change the input file, the GUI will allow you to change it, so you don't need to close out every time you wish to change the input file.
 
 The built-in matplotlib functions like pan, save, and subplot settings are still in place.
 
-The sampling frequency is not dynamically set. 
+The label in **bold white font with black background** shows the origin of the file. 
+
+
+~~~
+to try the gui, use the `test_bin_file` inside the *janeliasig* source folder. It has about 2 megabytes of data.
+~~~
 
 ##Algorithms
 ### How to use functions
