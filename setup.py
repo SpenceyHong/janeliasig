@@ -1,13 +1,11 @@
 from setuptools import setup
 
-def readme():
-	with open('README.md') as f:
-		return f.read()
+
 
 setup(name='janeliasig',
       version='0.94',
       description='Rudimentary Simulations/Manipulations of PMT Outputs',
-      long_description = readme(),
+      long_description = "Please see GitHub for the full README! This package contains a GUI data browser.",
       classifiers = [
       'Development Status :: 3 - Alpha',
       'License :: OSI Approved :: MIT License',

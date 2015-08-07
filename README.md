@@ -89,7 +89,7 @@ The label in **bold white font with black background** shows the origin of the f
 
 
 ~~~
-to try the gui, use the `test_bin_file` inside the *janeliasig* source folder. It has about 2 megabytes of data.`test_bin_file` only belongs in this github directory. If you installed via pip, the bin file will not be in the source folder. Clone the directory.
+to try the gui, use the `test_bin_file` inside the *janeliasig* source folder. It has about 2 megabytes of data.
 ~~~
 
 ##Algorithms
