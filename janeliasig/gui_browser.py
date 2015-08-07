@@ -47,40 +47,46 @@ negative_axis = False
 #the placeholder for where the unpacked data will go
 real_data = []
 
-def minimize(): 
+def x_minimize(): 
     global  a, f, current_xmin, current_xmax, current_ymin, current_ymax
     
     
     
-    current_ymin *= 1.75
-    current_ymax *= 1.75
-    current_xmin *= 1.2
-    current_xmax *= 1.2
+    
+    current_xmin -= (current_xmax - current_xmin) * 0.1
+    current_xmax += (current_xmax - current_xmin) * 0.1
     ax.set_xlim(current_xmin, current_xmax)
-    ax.set_ylim(current_ymin, current_ymax)
     fig.canvas.draw() 
 
 
-def maximize():
+def x_maximize():
     global  a, f, current_xmin, current_xmax, current_ymin, current_ymax
     
     
     
-    current_ymin /= 1.75
-    current_ymax /= 1.75
-    current_xmin /= 1.2
-    current_xmax /= 1.2
+    current_xmin += (current_xmax - current_xmin) * 0.1
+    current_xmax -= (current_xmax - current_xmin) * 0.1
     ax.set_xlim(current_xmin, current_xmax)
-    ax.set_ylim(current_ymin, current_ymax)
     fig.canvas.draw() 
 
-
+def y_minimize():
+    global  a, f, current_xmin, current_xmax, current_ymin, current_ymax
+    current_ymin -= (current_ymax - current_ymin) * 0.1
+    current_ymax += (current_ymax - current_ymin) * 0.1
+    ax.set_ylim(current_ymin, current_ymax)
+    fig.canvas.draw() 
+def y_maximize():
+    global  a, f, current_xmin, current_xmax, current_ymin, current_ymax
+    current_ymin += (current_ymax - current_ymin) * 0.1
+    current_ymax -= (current_ymax - current_ymin) * 0.1
+    ax.set_ylim(current_ymin, current_ymax)
+    fig.canvas.draw() 
 def shift_right_key(event): 
     global plotShift, a, f, current_xmin, current_xmax
     
     
     
-    plotShift = 2000
+    plotShift = current_xmax - current_xmin
     current_xmin += plotShift
     current_xmax += plotShift
     ax.set_xlim(current_xmin, current_xmax)
@@ -90,7 +96,7 @@ def shift_right_key(event):
 def shift_left_key(event):
     global plotShift, a, f, current_xmin, current_xmax
     
-    plotShift = -2000
+    plotShift = current_xmin- current_xmax
     current_xmin += plotShift
     current_xmax += plotShift
     ax.set_xlim(current_xmin, current_xmax)
@@ -100,7 +106,7 @@ def shift_left_key(event):
 def shift_up_key(event):
     global plotShift, a, f, current_ymin, current_ymax
     
-    plotShift = 2
+    plotShift = current_ymax - current_ymin
     current_ymin += plotShift
     current_ymax += plotShift
     ax.set_ylim(current_ymin, current_ymax)
@@ -109,7 +115,7 @@ def shift_down_key(event):
     global plotShift, a, f, current_ymin, current_ymax
     
    
-    plotShift = -2
+    plotShift = current_ymin - current_ymax
     current_ymin  += plotShift
     current_ymax += plotShift
     ax.set_ylim(current_ymin, current_ymax)
@@ -181,7 +187,7 @@ def browse():
     ax.set_ylim(current_ymin, current_ymax)
     
     string.set(fname)
-    string1.set("Sampling Frequency: 1.5 Gigahertz, first " + str(current_xmax - current_xmin) + " samples")
+    #string1.set("Sampling Frequency: 1.5 Gigahertz, first " + str(current_xmax - current_xmin) + " samples")
     if fname.find("ch0") == -1:
         ax.set_title("Laser Pulses")
     else:
@@ -192,18 +198,26 @@ def browse():
     m1, m2 = peak_analyze()
     
     fig.canvas.draw()
-
-#flips the y-axis
-#primitive at the moment (pre-set values)
-def y_change():
+def x_change():
     global current_xmax, current_xmin, a, f, negative_axis
     current_xmin = float(diary.get())
     current_xmax = float(diary1.get())
 
-    string1.set("Sampling Frequency: 1.5 Gigahertz, first " + str(current_xmax - current_xmin) + " samples")
+    #string1.set("Sampling Frequency: 1.5 Gigahertz, first " + str(current_xmax - current_xmin) + " samples")
     ax.set_xlim(current_xmin, current_xmax)
 
     fig.canvas.draw()
+
+def y_change():
+    global current_ymax, current_ymin, a, f, negative_axis
+    current_ymin = float(diary3.get())
+    current_ymax = float(diary2.get())
+
+    #string1.set("Sampling Frequency: 1.5 Gigahertz, first " + str(current_xmax - current_xmin) + " samples")
+    ax.set_ylim(current_ymin, current_ymax)
+
+    fig.canvas.draw()
+
 def threshold_algorithm(threshold_value, data):
     arrival_times = []
     maxtab, mintab = peakdet(data,threshold_value)
@@ -286,7 +300,7 @@ def mean_confidence_interval(data, confidence=0.95):
     h = se * sp.stats.t._ppf((1+confidence)/2., n-1)
     return m, m-h, m+h
 def show_peaks():
-    global y_photons, a, f, offshoot_value
+    global y_photons, a, f, offshoot_value, current_xmax, current_xmin, current_ymax, current_ymin
     ax.clear()
     template_list = [ 1 , 4 , 7 ,10 ,13 ,16 ,18 ,21 ,22 ,23 ,24 ,25 ,24 ,24 ,23 ,21 ,19 ,17 ,14, 12 ,10  ,8  ,5 , 3 , 1]
     zero_convoluted_data = list(y_photons)
@@ -427,7 +441,9 @@ def show_peaks():
     ax.scatter(final_peak_times, final_peak_values)
     ax.set_title("Peak Detection on Cross Correlated Data")
     ax.set_xlabel("Time - nanoseconds")
-    ax.set_ylim(-500, 5500)
+    current_ymin = -500
+    current_ymax = 5500
+    ax.set_ylim(current_ymin, current_ymax)
     ax.set_xlim(current_xmin, current_xmax)
     fig.canvas.draw()
 #Will not work for negatively scaled amplitudes
@@ -446,32 +462,49 @@ string = Tkinter.StringVar()
 lab = Tkinter.Label(root, textvariable = string, fg = 'white', bg = 'black', font = "Verdana 10 bold")
 lab.pack()
 
-string1 = Tkinter.StringVar()
-lab1 = Tkinter.Label(root, textvariable = string1, font = "Verdana 12 bold")
-lab1.pack()
+#string1 = Tkinter.StringVar()
+#lab1 = Tkinter.Label(root, textvariable = string1, font = "Verdana 12 bold")
+#lab1.pack()
 
-string2 = Tkinter.StringVar()
-lab2 = Tkinter.Label(root, textvariable = string2, font = "Verdana 14 bold", fg = 'red')
-lab2.pack()
 
 string3 = Tkinter.StringVar()
-diary = Tkinter.Entry(root, textvariable = string3, width = 25)
-diary.pack(fill = 'y')
-diary.insert(0, "The Minimum X Coordinate")
+diary = Tkinter.Entry(root, textvariable = string3, width = 20)
+diary.pack(side = Tkinter.LEFT)
+diary.insert(0, "Minimum X Coordinate")
 
 string4 = Tkinter.StringVar()
-diary1 = Tkinter.Entry(root, textvariable = string4, width = 25)
-diary1.pack(fill = 'y')
-diary1.insert(0, "The Maximum X Coordinate")
+diary1 = Tkinter.Entry(root, textvariable = string4, width = 20)
+diary1.pack(side = Tkinter.LEFT)
+diary1.insert(0, "Maximum X Coordinate")
+
+string5 = Tkinter.StringVar()
+diary2 = Tkinter.Entry(root, textvariable = string5, width = 20)
+diary2.pack(side = Tkinter.RIGHT)
+diary2.insert(0, "Maximum Y Coordinate")
+
+string6 = Tkinter.StringVar()
+diary3 = Tkinter.Entry(root, textvariable = string6, width = 20)
+diary3.pack(side = Tkinter.RIGHT)
+diary3.insert(0, "Minimum Y Coordinate")
+
 
 button = Tkinter.Button(master=root, text='Input File', command=browse, font = "Helvetica 16 bold") 
 button.pack(fill='x', side=Tkinter.TOP)
-button1 = Tkinter.Button(master=root, text = "Maximize", command=maximize, fg = 'red', font = "Helvetica 16 bold")
-button1.pack(side = Tkinter.RIGHT, fill = 'both')
-button2 = Tkinter.Button(master=root, text = "Minimize", command=minimize, fg = 'red', font = "Helvetica 16 bold")
-button2.pack(side = Tkinter.LEFT, fill = 'both')
-button3 = Tkinter.Button(master = root, text = 'Click to Change X-Window', command = y_change, font = "Helvetica 10 bold italic")
-button3.pack(side = Tkinter.TOP, fill = 'both')
+
+button2 = Tkinter.Button(master=root, text = "X (-)", command=x_minimize, fg = 'red', font = "Helvetica 16 bold")
+button2.pack(side = Tkinter.LEFT, fill = 'x')
+button1 = Tkinter.Button(master=root, text = "X (+)", command=x_maximize, fg = 'red', font = "Helvetica 16 bold")
+button1.pack(side = Tkinter.LEFT, fill = 'x')
+
+button6 = Tkinter.Button(master = root, text= "Y (+)", command =y_maximize, fg = 'red', font = "Heveltica 16 bold" )
+button6.pack(side = Tkinter.RIGHT, fill = 'x')
+button7 = Tkinter.Button(master = root, text= "Y (-)", command =y_minimize, fg = 'red', font = "Heveltica 16 bold" )
+button7.pack(side = Tkinter.RIGHT, fill = 'x')
+
+button3 = Tkinter.Button(master = root, text = 'Click to Change X-Window', command = x_change, font = "Helvetica 10 bold italic")
+button3.pack(side = Tkinter.BOTTOM, fill = 'both')
+button5 = Tkinter.Button(master = root, text = 'Click to Change Y-Window', command = y_change, font = "Helvetica 10 bold italic")
+button5.pack(side = Tkinter.BOTTOM, fill = 'both')
 button4 = Tkinter.Button(master = root, text = "Plot Detected Peaks", command = show_peaks, font = "Helvetica 10 bold italic")
 button4.pack( fill = 'both')
 
@@ -480,6 +513,6 @@ root.bind('<Right>', shift_right_key)
 root.bind('<Up>', shift_up_key)
 root.bind('<Down>', shift_down_key)
 
-root.geometry('{}x{}'.format(800, 700))
+root.geometry('{}x{}'.format(1800, 1700))
 Tkinter.mainloop() 
 
