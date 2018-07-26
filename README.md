@@ -1,4 +1,6 @@
-#Janelia Signal Analysis (janeliasig)
+***Outdated***
+
+Janelia Signal Analysis (janeliasig)
 Created by **Spencer Hong**
 
 Contact me at <spencer.hongx@gmail.com> (preferred) or <hongs@janelia.hhmi.org>
